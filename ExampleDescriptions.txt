@@ -1,0 +1,45 @@
+                                    
+                                    
+                                                ---=== EXAMPLE 1 DESCRIPTION ===---
+
+Example 1 demonstrates how to begin writing code using SmileyBoi.  All code written should be placed inside the syntax “(: Code Here :)”. 
+You begin the document with defining the name of the script you are writing, in example 1, I have name the script ‘example_1’. I then 
+demonstrate how comments are placed in the document. After this I open up the main code block. Everything that needs to be ran should be 
+called and created in here. The main method is identifiable with the structure “Smile->{ Code Here }”. Inside this main method I define my 
+first variable. The assignment method requires a data type for new variables.  The first variable I define is a float this data type tag is 
+‘flt’, the next I show an example of how expressions can be used to assign a variables value and finally I create a float array. I then go 
+on to using the if statement, an if statement starts with a ‘?’ and is followed by parenthesis containing an expression. With a directional 
+arrow we move on to the result block where a variable is redefined. After this there is an example of an if else statement, this is if an 
+arrow continues after the block and another expression area is present. After this there is an else statement which is just a directional 
+arrow and a block expression because it doesn’t require a satisfactory expression. The result of the big block should leave the array value at 
+index 1 to be assigned to the value 4.2. 
+
+                                                ---=== EXAMPLE 2 DESCRIPTION ===---
+
+Example 2 shows the use of global methods and functions. Globals are defined after the script name is set. It is just like assigning a variable 
+however it is outside the main methods scope. Here I define a boolean which takes the values ‘yes’ or ‘no’. Functions are defined with ‘f)’ and 
+then given identification with a directional arrow, then there is an optional parameter area if the function requires it. Inside the function block 
+‘increaseToTen’ there is a while loop. While loops are defined with the keyword ‘During’ and then a directional arrow which then takes in an 
+expression, from there another direction arrow to the block inside of the loop. Inside there is a variable assign that takes into account an operator. 
+There is then an if statement which demonstrates the changing of a boolean value. Then another if else statement that demonstrates the not function. 
+Inside this if else statement there is an example of a return statement. Returns are written with ‘ret)’ and a directional arrow sending the variable 
+to it. A function is a non void when it contains a return statement, similar to how JavaScript works. Non voids must always return something, in this 
+case there is an else catch In the block that contains one which means the method is safe to use.  After the function there is the main method. Inside 
+the method block there is an example of a function call being used inside of an assign statement. On the next line there is an example of a constant 
+variable with the value of a recursive expression.
+
+                                                ---=== EXAMPLE 3 DESCRIPTION ===---
+                                                
+Example 3 starts with the use of a function that does not return a value or take in any parameters. As you can see there is no need for parenthesis. 
+The function simply prints the string “Hello World”. There is then another function which prints out two parameters that are passed into it. Inside of 
+the main method there is a function call to helloWorld, this is how function calls without arguments are called. After that there is the assignment of 
+an array that will have a size of 3. The values are then assigned to each index. There is then a loop. This is a for loop, to start it I use the keyword 
+‘Go’ and a directional arrow to set all of the arguments and expressions. In side the block I am setting a string variable to an index value at an array 
+and then calling the printValue function. I then declare a new float value I will use in the next loop statement. The next statement in similar to a for 
+loop but only used with arrays. It will cycle through the array and apply it to the assigned variable of your choice. This is useful if you don’t need to 
+see the index and just need to get through the array.
+
+                                                ---=== EXAMPLE 4 DESCRIPTION ===---
+Example 4 starts with a basic function which returns the value 10. In the main method there is the use of a do while statement. Inside I decrease a
+variable I have created earlier to show the negate assignment syntax. The do while loop contains a small recursion of an expression and shows a function
+returning a value being used as an expression. Inside the expression we also see use of the or statement. 

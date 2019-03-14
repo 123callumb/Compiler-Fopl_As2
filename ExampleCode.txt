@@ -1,0 +1,120 @@
+//  CODE EXAMPLE 1
+
+(:
+    Script example_1~
+
+    (-: This is an example Comment :-)
+
+    Smile -> {
+
+        flt number_1 <- 4.6~
+        flt number_2 <- (843.6+72.7)~
+        flt[] arrayEx <- {1.2, 2.3, 3.4}~
+
+        ?(number_1 > number_2)->{
+            number_1 <- 1~
+        }->(number_1 < number_2)->{
+            arrayEx[1] <- 4.2~ 
+        }->{
+            number_2 <- 2~
+        }
+    }
+
+:) 
+
+//  CODE EXAMPLE 2 
+
+(:
+    Script example_2~
+
+    flt globalNumber <- 1~
+    bln globalBool <- no~
+
+    f)->increaseToTen->(numberVal){
+
+        During->numberVal<10->{
+            numberVal +<- 1~
+        }
+        
+        ?(numberVal == 10)->{
+            globalBool <- yes~
+        }
+
+        ?(!globalBool)->{
+            ret) <- numberVal~
+        }->{
+            ret) <- 0~
+        }
+       
+    }
+
+    Smile -> {
+        
+        globalNumber<-increaseToTen(globalNumber)~
+        Const flt newNumber <- (((9*globalNumber)/10)*1.5)~
+
+    }
+
+:)
+
+//  CODE EXAMPLE 3 
+
+(:
+    Script example_3~
+
+    f)->helloWorld->{
+        str hello <- "Hello World"~
+        P->"hello"~
+    }
+    
+    f)->printValue->(value, num){
+        P->"value"~
+        P->"num"~
+    }
+
+    Smile -> {
+        helloWorld~
+
+        str[] arrayOfStrings <- [3]~
+        arrayOfStrings[0] <- "string_1"~
+        arrayOfStrings[1] <- "string_2"~
+        arrayOfStrings[2] <- "string_3"~
+
+        Go -> flt i <- 0 : i < 3 : i++ ->{
+            str value <- arrayOfStrings[i]~
+            printValue(value, i)~
+        }
+
+        flt number <- 1~
+
+        Go -> str element In arrayOfStrings ->{
+            printValue(element, number)~
+            number +<- 1~
+        }
+    }
+
+:)
+
+//  CODE EXAMPLE 4
+
+(:
+
+    Script example_4~
+
+
+    Smile -> {
+
+        flt numberTen <- 10~
+
+        f)->valueTen->{
+            ret)<-10~
+        }
+
+        During->{
+            numberTen -<-1~ 
+        }<-numberTen > 0 | numberTen > valueTen~
+
+    }
+
+
+:)
