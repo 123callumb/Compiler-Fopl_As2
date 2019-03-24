@@ -11,8 +11,8 @@ fileCompilation
 //	My functions and global variables are read before the actual main block is ran
 //	Therefore functions are NOT allowed to be created in the main method, only called.	
 globalItems
-	: assign #GlobalAssignment
-	| functionDeclare #FunctionsOutsideOfMainBlock
+	: assign //GlobalAssignment
+	| functionDeclare //FunctionsOutsideOfMainBlock
 	;
 
 //	Identify the name of the script you're writing	
@@ -35,7 +35,7 @@ codeBlockReturn
 
 //	I created two blocks one with return because the main method doesn't need to return anything and void methods don't.		
 codeBlockStmt
-	: assign
+	: assign ENDLN
 	| ifStmt
 	| iterationStmt
 	| functionCall
@@ -48,48 +48,76 @@ codeBlockReturnStmt
 	;
 	
 returnStmt
-	: RETURN LARROW expr ENDLN
+	: RETURN ASSIGNTO expr ENDLN
 	;
 
 //	If statement including else if and else.
 ifStmt
-	:'?' conditionBlock (RARROW conditionBlock)* (RARROW codeBlockReturn)?  
+	: ifCondition elseIfStmt* elseStmt?  
 	;
 
+ifCondition
+	: IF conditionBlock
+	;
+
+elseIfStmt
+	: RARROW conditionBlock
+	;
+
+elseStmt 
+	: RARROW codeBlockReturn
+	;
+	
 //	I have allowed returning inside of the iteration because most languages do it...
 iterationStmt
-	: WHILE RARROW expr RARROW codeBlockReturn #WhileStatement
-	| WHILE RARROW codeBlockReturn LARROW expr ENDLN #DoWhileStatement 
-	| FOR RARROW assign COL expr? COL expr RARROW codeBlockReturn #ForStatement
-	| FOR RARROW assign IN expr RARROW codeBlockReturn #ForInStatement 
+	: whileStmt   //WhileStatement
+	| doWhileStmt //DoWhileStatement 
+	| forLoopStmt //ForStatement
+	| forEachStmt //ForInStatement 
 	;
+
+whileStmt
+	: WHILE RARROW expr RARROW codeBlockReturn ENDLN
+	;
+
+doWhileStmt 
+	: WHILE RARROW codeBlockReturn LARROW expr ENDLN
+	;
+
+forLoopStmt
+	: FOR RARROW assign COL expr? COL expr RARROW codeBlockReturn 
+	;
+
+forEachStmt
+	: FOR RARROW assign IN expr RARROW codeBlockReturn
+	;
+
 	
 conditionBlock
 	: LPAR expr RPAR RARROW codeBlockReturn
 	;
 	
 printStmt
-	: PRINT
-	| PRINT STRING ENDLN
+	: PRINT STRING ENDLN
 	;
 	
 expr
-	: expr (MUL | DIV | MOD) expr #Multi
-	| expr (ADD | SUB) expr #Additio
-	| expr PWR expr #Power
-	| expr (GREATER | GREATER EQUALS | LESS | LESS EQUALS) expr #Relational
-	| expr (EQUALS EQUALS | NOT EQUALS) expr #EqualAndNotEqual
-	| NOT expr #not 
-	| expr AND expr #forTwoExpr
-	| expr OR expr #choiceExpr
-	| expr DEC #DecreaseVal
-	| expr INC #IncreaseVal
-	| value #valueOfExpr
+	: expr (MUL | DIV | MOD) expr //Multi
+	| expr (ADD | SUB) expr //Additio
+	| expr PWR expr //Power
+	| expr (GREATER | GREATER EQUALS | LESS | LESS EQUALS) expr //Relational
+	| expr (EQUALS EQUALS | NOT EQUALS) expr //EqualAndNotEqual
+	| NOT expr //not 
+	| expr AND expr //forTwoExpr
+	| expr OR expr //choiceExpr
+	| expr DEC //DecreaseVal
+	| expr INC //IncreaseVal
+	| value //valueOfExpr
 	;
 
 //	If the function doesn't have any arguments then you can just call its name
 functionCall
-	: identifier (LPAR arguments RPAR)? ENDLN?
+	: RARROW identifier (LPAR arguments RPAR)? ENDLN?
 	;
 
 //	If the function doesn't need arguments then you don't have to put them in.
@@ -107,11 +135,11 @@ params
 	;
 		
 value 
-	: variable #Variables
-	| literal #LiteralValues
-	| functionCall #ValueReturnedFromFunction
-	| arrayList #ArrayStructures
-	| arrayIndex #ValueAtArrayIndex
+	: identifier //Variables can't do var or that redefines the variable.
+	| literal //LiteralValues
+	| functionCall //ValueReturnedFromFunction
+	| arrayList //ArrayStructures
+	| arrayIndex //ValueAtArrayIndex
 	;
 	
 // For init with expressions or size
@@ -121,7 +149,7 @@ arrayList
 	;
 
 arrayIndex
-	: variable LSB DIGIT+ RSB
+	: var LSB DIGIT+ RSB
 	;
 
 literal
@@ -133,14 +161,15 @@ literal
 
 //	Assign like Const str jeff <- 'JEFF'~
 assign 
-	: CONSTANT? variable (ADD | SUB | DIV | MUL)? LARROW expr ENDLN
-	| arrayIndex (ADD | SUB | DIV | MUL)? LARROW expr ENDLN
+	: var (ADD | SUB | DIV | MUL)? ASSIGNTO expr 
+	| arrayIndex (ADD | SUB | DIV | MUL)? ASSIGNTO expr
 	;
 
 	
 //	Variables look a little like flt myVariable
-variable
-	: (FLOAT_ID | BOOL_ID | STRING_ID) (LSB RSB)? identifier
+var
+	: CONSTANT? (FLOAT_ID | BOOL_ID | STRING_ID) (LSB RSB)? identifier
+	| identifier
 	; 
 	
 //	So i can stick to a naming scheme that always starts with a letter then followed by numbers or letters.
@@ -164,6 +193,7 @@ FLOAT: DIGIT+ POINT DIGIT*
  	
 //	KEYWORDS
 SCRIPTNAME : 'Script';
+IF	:		 '?';
 TRUE :		 'yes';
 FALSE :		 'no';
 WHILE :		 'During';
@@ -176,6 +206,7 @@ PRINT:		 'P->';
 FLOAT_ID:	 'flt';
 BOOL_ID:	 'bln';
 STRING_ID:	 'str'; 
+//CALL: 		 'Call';
 
 //	SEPARATORS
 LPAR : 		'(';

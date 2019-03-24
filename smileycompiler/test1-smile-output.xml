@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Script name="example_1">
+  <Function identity="testFunction" paramName_0="num1" paramName_1="num2">
+    <Print>"This variable is greater than 2"</Print>
+    <Var const="false" name="test" type="str">"lol"</Var>
+    <ConditionBlock>
+      <If condition="3.0&gt;2.5">
+        <Print>"If has returned true"</Print>
+      </If>
+      <ElseIf condition="4.5&gt;num2">
+        <Print>"This is else if bit"</Print>
+      </ElseIf>
+      <Else>
+        <Print>"This is else bit"</Print>
+      </Else>
+    </ConditionBlock>
+  </Function>
+  <Function identity="functionTwo">
+    <Var const="false" name="num_1" type="flt">1.2</Var>
+    <Var const="false" name="num_2" type="flt">3.4</Var>
+    <FuncCall argument_0="num_1" argument_1="num_2" identity="testFunction"/>
+    <Iteration>
+      <While condition="num_1!=num_2">
+        <Print>"it is still smaller"</Print>
+      </While>
+    </Iteration>
+  </Function>
+  <Main>
+    <Print>"Hello World"</Print>
+    <Var const="false" name="hello" type="str">"Hellow"</Var>
+    <Var const="true" name="num" type="flt">6.9</Var>
+  </Main>
+</Script>
