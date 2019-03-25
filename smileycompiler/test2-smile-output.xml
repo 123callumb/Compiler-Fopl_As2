@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Script name="example_3">
+  <Function identity="helloWorld">
+    <Var const="true" name="hello" type="str">"Hello World"</Var>
+    <Print>"hello"</Print>
+  </Function>
+  <Function identity="printValue" paramName_0="value" paramName_1="num">
+    <Print>"value"</Print>
+    <Print>"num"</Print>
+  </Function>
+  <Main>
+    <FuncCall identity="helloWorld"/>
+    <Var const="false" name="str" type="str">null<ArrayValue index="]">arrayOfStrings</ArrayValue>
+    </Var>
+    <Var const="false" name="arrayOfStrings" type="arrayOfStrings">null<ArrayValue index="0">"string_1"</ArrayValue>
+    </Var>
+    <Var const="false" name="arrayOfStrings" type="arrayOfStrings">null<ArrayValue index="1">"string_2"</ArrayValue>
+    </Var>
+    <Var const="false" name="arrayOfStrings" type="arrayOfStrings">null<ArrayValue index="2">"string_3"</ArrayValue>
+    </Var>
+    <Iteration>
+      <ForLoop calculation="i++" condition="i&lt;3.0" variable="0.0">
+        <Var const="false" name="i" type="flt">0.0</Var>
+        <Var const="false" name="]" type="strvalue">null<ArrayValue index="arrayOfStrings">]</ArrayValue>
+        </Var>
+        <FuncCall argument_0="value" argument_1="i" identity="printValue"/>
+      </ForLoop>
+    </Iteration>
+    <Var const="false" name="number" type="flt">1.0</Var>
+    <Iteration>
+      <ForEach createdVariable="element" fromVarialbe="arrayOfStrings">
+        <FuncCall argument_0="element" argument_1="number" identity="printValue"/>
+        <Var name="number">1.0</Var>
+      </ForEach>
+    </Iteration>
+  </Main>
+</Script>

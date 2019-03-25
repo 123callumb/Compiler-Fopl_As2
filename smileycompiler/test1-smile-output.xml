@@ -14,6 +14,13 @@
         <Print>"This is else bit"</Print>
       </Else>
     </ConditionBlock>
+    <Iteration>
+      <ForLoop calculation="i-2.0" condition="i&gt;10.0" variable="16.0">
+        <Var const="false" name="i" type="flt">16.0</Var>
+        <Print>"This is a for loop"</Print>
+        <Var name="i">i+1.0</Var>
+      </ForLoop>
+    </Iteration>
   </Function>
   <Function identity="functionTwo">
     <Var const="false" name="num_1" type="flt">1.2</Var>
@@ -23,6 +30,12 @@
       <While condition="num_1!=num_2">
         <Print>"it is still smaller"</Print>
       </While>
+    </Iteration>
+    <Var const="false" name="floatArray" type="flt">{2.3,4.5,6.9}</Var>
+    <Iteration>
+      <ForEach createdVariable="element" fromVarialbe="floatArray">
+        <Print>"This is a for Each statement"</Print>
+      </ForEach>
     </Iteration>
   </Function>
   <Main>

@@ -13,7 +13,7 @@ import smiley.*;
 @SuppressWarnings("deprecation")
 public class Main {
 
-	private static String fileName = "test1.smile";
+	private static String fileName;
 	
 	public static void main(String[] args) throws Exception {
 		
@@ -36,7 +36,7 @@ public class Main {
 		System.out.println("Example Files: test1.smile, test2.smile and test3.smile\n");
 		
 		Scanner scan = new Scanner(System.in);
-//		fileName = scan.next();
+		fileName = scan.next();
 		File currentFile = new File(fileName);
 		while(!currentFile.exists()) {
 			System.out.println("File not found! Make sure the file is in the working directory...\n");

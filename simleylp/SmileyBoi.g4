@@ -85,11 +85,11 @@ doWhileStmt
 	;
 
 forLoopStmt
-	: FOR RARROW assign COL expr? COL expr RARROW codeBlockReturn 
+	: FOR RARROW assign COL expr COL expr RARROW codeBlockReturn 
 	;
 
 forEachStmt
-	: FOR RARROW assign IN expr RARROW codeBlockReturn
+	: FOR RARROW identifier IN expr RARROW codeBlockReturn
 	;
 
 	
@@ -145,11 +145,12 @@ value
 // For init with expressions or size
 arrayList
 	: LCB (expr (',' expr)*)? RCB
-	| LSB DIGIT+ RSB
 	;
 
 arrayIndex
-	: var LSB DIGIT+ RSB
+	: CONSTANT? (FLOAT_ID | BOOL_ID | STRING_ID) LSB RSB identifier (ASSIGNTO arrayList)?
+	| identifier LSB (DIGIT | expr)+ RSB ASSIGNTO expr
+	| var ASSIGNTO identifier LSB (DIGIT | expr)+ RSB
 	;
 
 literal
@@ -162,13 +163,13 @@ literal
 //	Assign like Const str jeff <- 'JEFF'~
 assign 
 	: var (ADD | SUB | DIV | MUL)? ASSIGNTO expr 
-	| arrayIndex (ADD | SUB | DIV | MUL)? ASSIGNTO expr
+	| arrayIndex 
 	;
 
 	
 //	Variables look a little like flt myVariable
 var
-	: CONSTANT? (FLOAT_ID | BOOL_ID | STRING_ID) (LSB RSB)? identifier
+	: CONSTANT? (FLOAT_ID | BOOL_ID | STRING_ID) (LSB (DIGIT | expr)? RSB)? identifier
 	| identifier
 	; 
 	

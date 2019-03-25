@@ -1,0 +1,35 @@
+(:
+    Script example_3~
+
+    f)->helloWorld->{
+        Const str hello <- "Hello World"~
+        P->"hello"~
+    }
+    
+    f)->printValue->(value, num){
+        P->"value"~
+        P->"num"~
+    }
+
+    Smile -> {
+        ->helloWorld~
+
+        str[] arrayOfStrings~
+        arrayOfStrings[0] <- "string_1"~
+        arrayOfStrings[1] <- "string_2"~
+        arrayOfStrings[2] <- "string_3"~
+
+        Go-> flt i <- 0.0 : i < 3.0 : i++ ->{
+            str value <- arrayOfStrings[i]~
+            ->printValue(value, i)~
+        }
+
+        flt number <- 1.0~
+
+        Go -> element In arrayOfStrings ->{
+            ->printValue(element, number)~
+            number +<- 1.0~
+        }
+    }
+
+:)
