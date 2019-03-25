@@ -15,10 +15,9 @@
       </Else>
     </ConditionBlock>
     <Iteration>
-      <ForLoop calculation="i-2.0" condition="i&gt;10.0" variable="16.0">
-        <Var const="false" name="i" type="flt">16.0</Var>
+      <ForLoop calculation="i++" condition="i&lt;10.0" variable="0.0">
+        <Var const="false" name="i" type="flt">0.0</Var>
         <Print>"This is a for loop"</Print>
-        <Var name="i">i+1.0</Var>
       </ForLoop>
     </Iteration>
   </Function>

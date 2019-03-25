@@ -1,0 +1,32 @@
+(:
+    Script example_2~
+
+    flt globalNumber <- 1.0~
+    bln globalBool <- no~
+
+    f)->increaseToTen->(numberVal){
+
+        During->numberVal>10.0->{
+            numberVal + <- 1.0~
+        }~
+        
+        ?(numberVal == 10.0)->{
+            globalBool <- yes~
+        }
+
+        ?(!globalBool)->{
+            ret) <- numberVal~
+        }->{
+            ret) <- 0.0~
+        }
+       
+    }
+
+    Smile -> {
+        
+        globalNumber<-->increaseToTen(globalNumber)~
+        Const flt newNumber <- (9.0*globalNumber)*4.0~
+
+    }
+
+:)

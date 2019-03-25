@@ -43,20 +43,11 @@ public class XMLWorker extends SmileyBoiBaseListener {
 	@Override public void enterAssign(SmileyBoiParser.AssignContext ctx) {
 		xmlString += "<Var";
 		
-		//Check if assign contains an array value 
+		//Then it's an array
 		if(ctx.getChildCount() == 1) {
+			xmlString += ">";
+		}else { // If it's a regualr variable
 			
-			//This is catches array[i] <- value~ statements
-			if(ctx.getChild(0).getChild(1).getText().equals("[")) {
-				xmlString += " arrayName=\"" + ctx.getChild(0).getChild(0) + "\">";
-			}
-			
-			//This catches str value <- array[i]~ statements
-			if(ctx.getChild(0).getChild(ctx.getChild(0).getChildCount() - 1).getText().equals("]")) {
-				xmlString += " name=\"" + ctx.getChild(0).getChild(0).getChild(ctx.getChild(0).getChild(0).getChildCount() - 1).getText() + "\"";
-			}
-			
-		}else{
 			int typePos = ctx.getChild(0).getChild(0).getText().equals("Const") ? 1 : 0; 
 			if(ctx.getChild(0).getChildCount() != 1) { // Have to check in case it's a reassign to an existing variable.
 				xmlString += " type=\"" + ctx.getChild(0).getChild(typePos).getText() + "\"";
@@ -68,19 +59,30 @@ public class XMLWorker extends SmileyBoiBaseListener {
 			xmlString += "\">";
 			
 			//Then the var value can go here
-			xmlString += ctx.getChildCount() != 1 ? ctx.getChild(ctx.getChildCount() -1).getText() : "null";
-		}	
+			xmlString += ctx.getChildCount() != 1 ? ctx.getChild(ctx.getChildCount() -1).getText() : "";
+			
+		}
 		
 	}
 	
-	@Override public void enterArrayIndex(SmileyBoiParser.ArrayIndexContext ctx) { 
-		xmlString += "<ArrayValue index=\"" + ctx.getChild(2).getText() + "\">";
+	@Override public void enterAssignArray(SmileyBoiParser.AssignArrayContext ctx) { 
+		xmlString += "<AssignArray>";
+	}
+	
+	@Override public void exitAssignArray(SmileyBoiParser.AssignArrayContext ctx) { xmlString += "</AssignArray>"; }
+	@Override public void enterArrayAssign(SmileyBoiParser.ArrayAssignContext ctx) { 
+		xmlString += "<ArrayAssign arrayName=\"" + ctx.getChild(0).getText() + "\" index=\"" + ctx.getChild(2).getText() + "\">";
 		xmlString += ctx.getChild(ctx.getChildCount() - 1).getText();
 	}
-
-	@Override public void exitArrayIndex(SmileyBoiParser.ArrayIndexContext ctx) {
-		xmlString += "</ArrayValue>";
+	@Override public void exitArrayAssign(SmileyBoiParser.ArrayAssignContext ctx) {  xmlString += "</ArrayAssign>";}
+	@Override public void enterArrayInitial(SmileyBoiParser.ArrayInitialContext ctx) {  
+		int count = ctx.getChildCount();
+		String name = ctx.getChild(count - 1).getText().equals('}') ? ctx.getChild(count - 3).getText() : ctx.getChild(count - 1).getText();
+		String type = ctx.getChild(0).equals("Const") ? ctx.getChild(1).getText() : ctx.getChild(0).getText();
+		xmlString += "<ArrayInitial arrayName=\"" + name + "\" type=\"" + type + "\">";	
 	}
+	
+	@Override public void exitArrayInitial(SmileyBoiParser.ArrayInitialContext ctx) {  xmlString += "</ArrayInitial>"; }
 	
 	@Override public void exitAssign(SmileyBoiParser.AssignContext ctx) {
 		xmlString += "</Var>";
@@ -199,6 +201,10 @@ public class XMLWorker extends SmileyBoiBaseListener {
 	
 	@Override public void exitForEachStmt(SmileyBoiParser.ForEachStmtContext ctx) {
 		xmlString += "</ForEach>";
+	}
+	
+	@Override public void enterGlobalItems(SmileyBoiParser.GlobalItemsContext ctx) {
+//		System.out.print("We have found some global items " + ctx.getText());
 	}
 	
 	public void createXML(String filename) throws Exception {

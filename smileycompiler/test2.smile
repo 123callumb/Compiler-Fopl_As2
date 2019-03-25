@@ -22,14 +22,14 @@
         Go-> flt i <- 0.0 : i < 3.0 : i++ ->{
             str value <- arrayOfStrings[i]~
             ->printValue(value, i)~
-        }
+        }~
 
         flt number <- 1.0~
 
         Go -> element In arrayOfStrings ->{
             ->printValue(element, number)~
             number +<- 1.0~
-        }
+        }~
     }
 
 :)

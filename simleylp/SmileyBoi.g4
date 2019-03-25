@@ -11,7 +11,7 @@ fileCompilation
 //	My functions and global variables are read before the actual main block is ran
 //	Therefore functions are NOT allowed to be created in the main method, only called.	
 globalItems
-	: assign //GlobalAssignment
+	: assign ENDLN//GlobalAssignment
 	| functionDeclare //FunctionsOutsideOfMainBlock
 	;
 
@@ -85,11 +85,11 @@ doWhileStmt
 	;
 
 forLoopStmt
-	: FOR RARROW assign COL expr COL expr RARROW codeBlockReturn 
+	: FOR RARROW assign COL expr COL expr RARROW codeBlockReturn ENDLN
 	;
 
 forEachStmt
-	: FOR RARROW identifier IN expr RARROW codeBlockReturn
+	: FOR RARROW identifier IN expr RARROW codeBlockReturn ENDLN
 	;
 
 	
@@ -112,6 +112,7 @@ expr
 	| expr OR expr //choiceExpr
 	| expr DEC //DecreaseVal
 	| expr INC //IncreaseVal
+	| LPAR expr RPAR // So we can use parens
 	| value //valueOfExpr
 	;
 
@@ -147,12 +148,22 @@ arrayList
 	: LCB (expr (',' expr)*)? RCB
 	;
 
-arrayIndex
-	: CONSTANT? (FLOAT_ID | BOOL_ID | STRING_ID) LSB RSB identifier (ASSIGNTO arrayList)?
-	| identifier LSB (DIGIT | expr)+ RSB ASSIGNTO expr
-	| var ASSIGNTO identifier LSB (DIGIT | expr)+ RSB
+assignArray // var <- arrayName[i]
+	: var ASSIGNTO identifier LSB (DIGIT | expr)+ RSB
 	;
 
+arrayInitial // Const type[] name <- {x, x}
+	: CONSTANT? (FLOAT_ID | BOOL_ID | STRING_ID) LSB RSB identifier (ASSIGNTO arrayList)?
+	;
+
+arrayAssign // array[i] <- x
+	: identifier LSB (DIGIT | expr)+ RSB ASSIGNTO expr
+	;
+
+arrayIndex
+	: identifier LSB (DIGIT | expr)+ RSB
+	;
+	
 literal
 	: CHAR
 	| STRING
@@ -163,7 +174,9 @@ literal
 //	Assign like Const str jeff <- 'JEFF'~
 assign 
 	: var (ADD | SUB | DIV | MUL)? ASSIGNTO expr 
-	| arrayIndex 
+	| assignArray
+	| arrayInitial
+	| arrayAssign 
 	;
 
 	
