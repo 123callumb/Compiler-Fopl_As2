@@ -14,8 +14,12 @@
       </If>
     </ConditionBlock>
     <ConditionBlock>
-      <If condition="!globalBool"/>
-      <Else/>
+      <If condition="!globalBool">
+        <Return>numberVal</Return>
+      </If>
+      <Else>
+        <Return>0.0</Return>
+      </Else>
     </ConditionBlock>
   </Function>
   <Main>

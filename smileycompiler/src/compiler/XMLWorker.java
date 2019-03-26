@@ -2,7 +2,9 @@ package compiler;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.StringReader;
+import java.util.Scanner;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,6 +16,8 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.InputSource;
 
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TreeItem;
 import smiley.SmileyBoiBaseListener;
 import smiley.SmileyBoiParser;
 import smiley.SmileyBoiParser.*;
@@ -21,6 +25,7 @@ import smiley.SmileyBoiParser.*;
 public class XMLWorker extends SmileyBoiBaseListener {
 	
 	String xmlString = new String("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+	TreeItem<String> element = new TreeItem<String>();
 	
 	@Override public void enterFileCompilation(FileCompilationContext ctx) {
 		xmlString += "<Script ";
@@ -207,22 +212,43 @@ public class XMLWorker extends SmileyBoiBaseListener {
 //		System.out.print("We have found some global items " + ctx.getText());
 	}
 	
-	public void createXML(String filename) throws Exception {
+	@Override public void enterReturnStmt(SmileyBoiParser.ReturnStmtContext ctx) { 
+		xmlString += "<Return>" + ctx.getChild(2).getText() + "</Return>";
+	}
+	
+	public void createXML(TextArea xmlArea) throws Exception {
 		// So here we can use the document builder to parse the string that has been created
 		// while walking the tree.
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder = dbf.newDocumentBuilder();
 		TransformerFactory tf = TransformerFactory.newInstance();
 		Transformer transformer = tf.newTransformer();
-		System.out.println(xmlString);
+//		System.out.println(xmlString);
 		// This is to make sure the output XML is tabulated, because no one likes a long ass string.
 		transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 		transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 		DOMSource source = new DOMSource(builder.parse(new InputSource(new StringReader(xmlString))));
-		FileWriter fw = new FileWriter(new File(filename));
+		File xmlFile = new File("temp-smile-xml.temp");
+		FileWriter fw = new FileWriter(xmlFile);
 		StreamResult sr = new StreamResult(fw);
 		transformer.transform(source, sr);
-		System.out.println("Saved XML document to: \n" + filename + "\n\n");
+		writeToUI(xmlArea, xmlFile);
+		
+		
+//		System.out.println("Saved XML document to: \n" + filename + "\n\n");
+	}
+	
+	private void writeToUI(TextArea xmlArea, File xmlFile) throws IOException {
+		
+		try(Scanner loadscan = new Scanner(xmlFile).useDelimiter("\n")){
+			xmlArea.clear();
+			while(loadscan.hasNext()) {
+				xmlArea.appendText(loadscan.next().replaceAll("&gt;", ">").replaceAll("&lt;", "<") + "\n");
+			}
+		}catch(IOException e) {
+			System.err.print("Error printing xml to ui");
+		}
+
 	}
 
 

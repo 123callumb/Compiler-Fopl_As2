@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Script name="new_smile_script">
+  <Main>
+    <Print>"Hello World"</Print>
+  </Main>
+</Script>
