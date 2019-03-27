@@ -203,6 +203,7 @@ BOOL: TRUE
 	;
 FLOAT: DIGIT+ POINT DIGIT* 
  	 | POINT DIGIT+
+ 	 | DIGIT+ 
  	 ;
  	
 //	KEYWORDS

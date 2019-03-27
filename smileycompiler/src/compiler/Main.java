@@ -1,6 +1,7 @@
 package compiler;
 
 import java.io.BufferedWriter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,25 +38,35 @@ public class Main extends Application {
 		Application.launch(args);
 	}
 	
-	private static void Compile(TextArea xmlArea, TextArea javaScriptArea) throws Exception {
+	private static void Compile(TextArea xmlArea, TextArea javaScriptArea, TextArea errorConsole) throws Exception {
 		XMLWorker xmlBuilder = new XMLWorker();
-		WalkCurrentTree(xmlBuilder);
+		WalkCurrentTree(xmlBuilder, errorConsole);
 		xmlBuilder.createXML(xmlArea);
 	}
 	
 	
-	private static void Search(String value, TextArea searchResults, ListView<String> searchCalcs) throws IOException {
+	private static void Search(String value, TextArea searchResults, TextArea errorConsole) throws IOException {
 		Searcher search = new Searcher(value);
-		WalkCurrentTree(search);
+		WalkCurrentTree(search, errorConsole);
 		searchResults.clear();
 		searchResults.setText(search.getResults());
 	}
 	
-	private static void WalkCurrentTree(SmileyBoiBaseListener type) throws IOException {
+	private static void CalculateVariables(ListView<String> searchCalcs, TextArea errorConsole) throws IOException {
+		VariableCalculator varCal = new VariableCalculator();
+		WalkCurrentTree(varCal, errorConsole);
+		searchCalcs.getItems().clear();
+		varCal.addScannedVariables(searchCalcs);
+	}
+	
+	private static void WalkCurrentTree(SmileyBoiBaseListener type, TextArea errorConsole) throws IOException {
 		ANTLRInputStream input = new ANTLRInputStream(currentFile);
 		SmileyBoiLexer lexer = new SmileyBoiLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
+		ErrorHandler errorListener = new ErrorHandler(errorConsole);
 		SmileyBoiParser parser = new SmileyBoiParser(tokens);
+		// Add custom error listener here
+		parser.addErrorListener(errorListener);
 		ParseTree tree = parser.fileCompilation();
 		ParseTreeWalker walker = new ParseTreeWalker();
 		walker.walk(type, tree); 
@@ -101,7 +112,10 @@ public class Main extends Application {
 		Label varLabel = new Label("Variables:");
 		ListView<String> variableCalculations = new ListView<String>();
 		Label returnLabel = new Label("Program Returns = (Press 'Run' to Calculate)");
-		VBox searchMenu = new VBox(searchBoxLabel, searchBox, searchButton, searchLabel, searchResult, varLabel, variableCalculations, returnLabel);
+		Label errorConsoleLabel = new Label("Error Console:");
+		TextArea errorConsole = new TextArea();
+		errorConsole.setEditable(false);
+		VBox searchMenu = new VBox(searchBoxLabel, searchBox, searchButton, searchLabel, searchResult, varLabel, variableCalculations, errorConsoleLabel, errorConsole, returnLabel);
 		searchMenu.setPadding(new Insets(20));
 		
 		// These are the menu button
@@ -141,7 +155,7 @@ public class Main extends Application {
 		compileBut.setOnAction(value -> {
 			try {
 				setCurrentFile(codePad.getText());
-				Compile(xmlResult, javascriptResult);
+				Compile(xmlResult, javascriptResult, errorConsole);
 			} catch (Exception e) {
 				System.err.println("Failure Compiling Script :( \n\nError:" + e);
 			}
@@ -151,11 +165,20 @@ public class Main extends Application {
 			try {
 				if(searchBox.getValue() != null) {
 					setCurrentFile(codePad.getText());
-					Search(searchBox.getValue(), searchResult, variableCalculations);
+					Search(searchBox.getValue(), searchResult, errorConsole);
 				}
 
 			} catch (Exception e) {
 				System.err.println("Error searching for element!");
+			}
+		});
+		
+		runBut.setOnAction(value -> {
+			try {
+				setCurrentFile(codePad.getText());
+				CalculateVariables(variableCalculations, errorConsole);
+			}catch(Exception e) {
+				System.err.println("Error calculation varables.");
 			}
 		});
 		
