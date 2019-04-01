@@ -1,40 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<Script name="example_three">
-  <Function identity="helloWorld">
-    <Var const="true" name="hello" type="str">"Hello World"</Var>
-    <Print>"hello"</Print>
-  </Function>
-  <Function identity="printValue" paramName_0="value" paramName_1="num">
-    <Print>"value"</Print>
-    <Print>"num"</Print>
-  </Function>
+<Script name="new_smile_script">
   <Main>
-    <FuncCall identity="helloWorld"/>
-    <Var>
-      <ArrayInitial arrayName="arrayOfStrings" type="str"/>
-    </Var>
-    <Var>
-      <ArrayAssign arrayName="arrayOfStrings" index="0">"string_1"</ArrayAssign>
-    </Var>
-    <Var>
-      <ArrayAssign arrayName="arrayOfStrings" index="1">"string_2"</ArrayAssign>
-    </Var>
-    <Var>
-      <ArrayAssign arrayName="arrayOfStrings" index="2">"string_3"</ArrayAssign>
-    </Var>
-    <Iteration>
-      <ForLoop calculation="i++" condition="i&lt;3" variable="0">
-        <Var const="false" name="i" type="flt">0</Var>
-        <Var const="false" name="value" type="str">arrayOfStrings[i]</Var>
-        <FuncCall argument_0="value" argument_1="i" identity="printValue"/>
-      </ForLoop>
-    </Iteration>
-    <Var const="false" name="number" type="flt">1</Var>
-    <Iteration>
-      <ForEach createdVariable="element" fromVarialbe="arrayOfStrings">
-        <FuncCall argument_0="element" argument_1="number" identity="printValue"/>
-        <Var name="number">1</Var>
-      </ForEach>
-    </Iteration>
+    <Print>"Hello World"</Print>
+    <Var const="false" name="val" type="flt">8.9*9.4/5.6</Var>
   </Main>
 </Script>

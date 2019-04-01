@@ -37,7 +37,7 @@ public class VariableCalculator extends SmileyBoiBaseListener {
 				Variable newVariable = new Variable(name);
 				
 				// Pass the current expression context to the variable.
-				newVariable.setAssignedExpr(exprValue); // This is like my own custom listener I guess :P
+				newVariable.setAssignedExpr(exprValue, variables); // This is like my own custom listener I guess :P
 				
 				// Add to list of variables
 				variables.add(newVariable);
@@ -65,5 +65,6 @@ public class VariableCalculator extends SmileyBoiBaseListener {
 		}
 		return found ? index : -1;
 	}
+	
 
 }

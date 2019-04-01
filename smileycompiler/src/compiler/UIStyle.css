@@ -1,0 +1,79 @@
+.root {
+	-fx-background-color: rgb(40, 40, 40);
+	-fx-text-fill: white;
+	-fx-color: white;
+}
+
+.text-area {
+	-fx-text-fill: rgb(92,198, 201);
+	-fx-background-color: rgb(20,20,20);
+	-fox-border-radius: 0;
+}
+
+.text-area .content {
+	-fx-background-color: rgb(50, 50, 50);
+}
+
+.label {
+	-fx-text-fill: white;
+	-fx-font-size: 14;
+}
+
+.tool-bar {
+	-fx-background-color: rgb(30, 30, 30);
+	-fx-padding: 10px;
+}
+
+.region {
+	-fx-background-color: rgb(30, 30, 30);
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+.button {
+	-fx-background-color: rgb(50, 50, 50);
+	-fx-text-fill: white;
+	-fx-background-radius: 0;
+	-fx-border-color: rgb(20, 20, 20);
+}
+
+.button:hover {
+	-fx-background-color: rgb(100, 100, 100);
+	-fx-cursor: pointer;
+}
+
+.combo-box {
+	-fx-background-color: rgb(50, 50, 50);
+	-fx-border-color: rgb(20, 20, 20);
+}
+
+.combo-box .list-cell {
+	-fx-background-color: rgb(50, 50, 50);
+	-fx-text-fill: white;
+}
+
+.combo-box .list-cell:hover {
+	-fx-background-color: rgb(100, 100, 100);
+}
+
+.list-view {
+	-fx-control-inner-background: rgb(50,50,50);
+	-fx-border-color: rgb(20, 20, 20);
+}
+
+.list-view .list-cell {
+	-fx-text-fill: white;
+}
+
+.list-view .list-cell:even{
+	-fx-background-color: rgb(40, 40, 40);
+}
+
+.list-view .list-cell:odd {
+	-fx-background-color: rgb(30, 30, 30);
+}

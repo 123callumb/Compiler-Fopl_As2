@@ -26,7 +26,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import smiley.*;
 
 @SuppressWarnings("deprecation")
@@ -39,9 +38,10 @@ public class Main extends Application {
 	}
 	
 	private static void Compile(TextArea xmlArea, TextArea javaScriptArea, TextArea errorConsole) throws Exception {
-		XMLWorker xmlBuilder = new XMLWorker();
-		WalkCurrentTree(xmlBuilder, errorConsole);
-		xmlBuilder.createXML(xmlArea);
+		Worker builder = new Worker();
+		WalkCurrentTree(builder, errorConsole);
+		builder.createXML(xmlArea);
+		builder.writeJStoUI(javaScriptArea);
 	}
 	
 	
@@ -88,9 +88,8 @@ public class Main extends Application {
 		// This is going to start to get messy but once i have the basics i will clean it up
 		// when i know how the data is passed through the application.
 		mainStage.setTitle("Smiley Boi Parser/Compiler - FOP");
-		mainStage.setWidth(1340);
-		mainStage.setHeight(720);
-		mainStage.setResizable(false);
+		mainStage.setMinWidth(1340);
+		mainStage.setMinHeight(720);
 		mainStage.show();
 		
 		
@@ -111,24 +110,35 @@ public class Main extends Application {
 		TextArea searchResult = new TextArea();
 		Label varLabel = new Label("Variables:");
 		ListView<String> variableCalculations = new ListView<String>();
+		variableCalculations.setMaxHeight(200);
 		Label returnLabel = new Label("Program Returns = (Press 'Run' to Calculate)");
 		Label errorConsoleLabel = new Label("Error Console:");
 		TextArea errorConsole = new TextArea();
 		errorConsole.setEditable(false);
-		VBox searchMenu = new VBox(searchBoxLabel, searchBox, searchButton, searchLabel, searchResult, varLabel, variableCalculations, errorConsoleLabel, errorConsole, returnLabel);
+		Button clearConsole = new Button("Clear");
+		VBox searchMenu = new VBox(searchBoxLabel, searchBox, searchButton, searchLabel, searchResult, varLabel, variableCalculations, errorConsoleLabel, errorConsole, clearConsole, returnLabel);
 		searchMenu.setPadding(new Insets(20));
+		searchMenu.setSpacing(10);
 		
 		// These are the menu button
 		Button newFile = new Button("New File");
 		Button loadFile = new Button("Load File");
 		Button compileBut = new Button("Parse");
 		Button runBut = new Button("Run Script");
+		Button saveSmile = new Button("Save");
+		Button saveXML = new Button("Save XML");
+		Button saveJS = new Button("Save JavaScript");
 		
 		
-		ToolBar menuBar = new ToolBar(newFile, loadFile, compileBut, runBut);
+		ToolBar menuBar = new ToolBar(newFile, loadFile, compileBut, runBut, saveSmile, saveXML, saveJS);
 		HBox contentBox = new HBox(searchMenu, codePad, xmlResult, javascriptResult);	
 		VBox mainHolder = new VBox(menuBar, contentBox);
 		
+		// Save/load dialogue
+		FileChooser chooseBox = new FileChooser();
+		chooseBox.getExtensionFilters().add(new FileChooser.ExtensionFilter("Smile Scripts", "*.smile"));
+		chooseBox.getExtensionFilters().add(new FileChooser.ExtensionFilter("JavaScript", "*.js"));
+		chooseBox.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML File", "*.xml"));
 		
 		// Button actions here
 		newFile.setOnAction(value -> {
@@ -136,8 +146,7 @@ public class Main extends Application {
 		});
 		
 		loadFile.setOnAction(value -> {
-			FileChooser chooseBox = new FileChooser();
-			chooseBox.getExtensionFilters().add(new FileChooser.ExtensionFilter("Smile Scripts", "*.smile"));
+			chooseBox.setSelectedExtensionFilter(chooseBox.getExtensionFilters().get(0));
 			File selectedFile = chooseBox.showOpenDialog(mainStage);
 			Scanner loadscan;
 			try {
@@ -147,7 +156,7 @@ public class Main extends Application {
 					codePad.appendText(loadscan.next() + "\n");
 				}
 			} catch (FileNotFoundException e) {
-				System.err.println("Could not find file!");
+				errorConsole.appendText("Could not find file!");
 			}
 
 		});
@@ -157,7 +166,7 @@ public class Main extends Application {
 				setCurrentFile(codePad.getText());
 				Compile(xmlResult, javascriptResult, errorConsole);
 			} catch (Exception e) {
-				System.err.println("Failure Compiling Script :( \n\nError:" + e);
+				errorConsole.appendText("Failure Compiling Script :( \n\nError:" + e);
 			}
 		});
 		
@@ -167,9 +176,8 @@ public class Main extends Application {
 					setCurrentFile(codePad.getText());
 					Search(searchBox.getValue(), searchResult, errorConsole);
 				}
-
 			} catch (Exception e) {
-				System.err.println("Error searching for element!");
+				errorConsole.appendText("Error searching for element!");
 			}
 		});
 		
@@ -178,14 +186,49 @@ public class Main extends Application {
 				setCurrentFile(codePad.getText());
 				CalculateVariables(variableCalculations, errorConsole);
 			}catch(Exception e) {
-				System.err.println("Error calculation varables.");
+				errorConsole.appendText("Error calculation varables." + e);
 			}
 		});
 		
-		Scene mainScene = new Scene(mainHolder, mainStage.getWidth(), mainStage.getHeight());
-		mainStage.setScene(mainScene);
+		saveSmile.setOnAction(value -> {
+			chooseBox.setSelectedExtensionFilter(chooseBox.getExtensionFilters().get(0));
+			File destFile = chooseBox.showSaveDialog(mainStage);
+			SaveFile(destFile, codePad, chooseBox, errorConsole);
+		});
 		
+		saveXML.setOnAction(value -> {
+			chooseBox.setSelectedExtensionFilter(chooseBox.getExtensionFilters().get(2));
+			File destFile = chooseBox.showSaveDialog(mainStage);
+			SaveFile(destFile, xmlResult, chooseBox, errorConsole);
+		});
+		
+		saveJS.setOnAction(value -> {
+			chooseBox.setSelectedExtensionFilter(chooseBox.getExtensionFilters().get(1));
+			File destFile = chooseBox.showSaveDialog(mainStage);
+			SaveFile(destFile, javascriptResult, chooseBox, errorConsole);
+		});
+		
+		clearConsole.setOnAction(value -> {
+			errorConsole.clear();
+		});
+		
+		Scene mainScene = new Scene(mainHolder, mainStage.getWidth(), mainStage.getHeight());
+		mainScene.getStylesheets().add("compiler/UIStyle.css");
+		mainStage.setScene(mainScene);
 
+	}
+	
+	private void SaveFile(File fileChosen, TextArea area, FileChooser chooseBox, TextArea errorBox) {
+		chooseBox.setInitialFileName("untitled");
+		if(fileChosen != null) {
+			try {
+				FileWriter fw = new FileWriter(fileChosen);
+				fw.write(area.getText());
+				fw.close();
+			} catch (IOException e) {
+				errorBox.appendText("Could not save smile script " + e);
+			}
+		}
 	}
 
 }

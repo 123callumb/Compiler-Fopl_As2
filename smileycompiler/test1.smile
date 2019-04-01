@@ -1,12 +1,12 @@
 (:
-    Script example_1~
+    Script example_one~
 
     f)->testFunction->(num1, num2){
 
         P->"This variable is greater than 2"~
         str test <- "lol"~
 
-        ?(3.0 > 2.5)->{
+        ?(num1 > 2.5)->{
             P->"If has returned true"~
         }->(4.5 > num2)->{
             P->"This is else if bit"~
@@ -25,7 +25,7 @@
         flt num_2 <- 3.4~
         ->testFunction(num_1, num_2)~
 
-        During->num_1!=num_2->{
+        During->num_1<num_2->{
             P->"it is still smaller"~
         }~
 
@@ -40,5 +40,6 @@
         P->"Hello World"~
         str hello <- "Hellow"~
         Const flt num <- 6.9~
+	ret) <- num~
     }
 :)

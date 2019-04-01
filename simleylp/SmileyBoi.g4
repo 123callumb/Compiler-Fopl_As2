@@ -40,6 +40,7 @@ codeBlockStmt
 	| iterationStmt
 	| functionCall
 	| printStmt
+	| returnStmt
 	;
 	
 codeBlockReturnStmt
@@ -98,7 +99,7 @@ conditionBlock
 	;
 	
 printStmt
-	: PRINT STRING ENDLN
+	: PRINT (STRING | value)+ ENDLN
 	;
 	
 expr
@@ -201,9 +202,10 @@ STRING : DQUOTE (ESC|.)*? DQUOTE;
 BOOL: TRUE
 	| FALSE
 	;
+	
+// For some reason, having DIGIT+ as one on here messes up on my Mac but doesn't on windows. I will record demo in windows.
 FLOAT: DIGIT+ POINT DIGIT* 
  	 | POINT DIGIT+
- 	 | DIGIT+ 
  	 ;
  	
 //	KEYWORDS
