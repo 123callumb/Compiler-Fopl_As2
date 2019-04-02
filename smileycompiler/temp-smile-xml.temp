@@ -1,7 +1,46 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<Script name="new_smile_script">
+<Script name="example_one">
+  <Function identity="testFunction" paramName_0="num1" paramName_1="num2">
+    <Print>"This variable is greater than 2"</Print>
+    <Var const="false" name="test" type="str">"lol"</Var>
+    <ConditionBlock>
+      <If condition="num1&gt;2.5">
+        <Print>"If has returned true"</Print>
+      </If>
+      <ElseIf condition="4.5&gt;num2">
+        <Print>"This is else if bit"</Print>
+      </ElseIf>
+      <Else>
+        <Print>"This is else bit"</Print>
+      </Else>
+    </ConditionBlock>
+    <Iteration>
+      <ForLoop calculation="i++" condition="i&lt;10.0" variable="0.0">
+        <Var const="false" name="i" type="flt">0.0</Var>
+        <Print>"This is a for loop"</Print>
+      </ForLoop>
+    </Iteration>
+  </Function>
+  <Function identity="functionTwo">
+    <Var const="false" name="num_1" type="flt">1.2</Var>
+    <Var const="false" name="num_2" type="flt">3.4</Var>
+    <FuncCall argument_0="num_1" argument_1="num_2" identity="testFunction"/>
+    <Iteration>
+      <While condition="num_1&lt;num_2">
+        <Print>"it is still smaller"</Print>
+      </While>
+    </Iteration>
+    <Var const="false" name="floatArray" type="flt">{2.3,4.5,6.9}</Var>
+    <Iteration>
+      <ForEach createdVariable="element" fromVarialbe="floatArray">
+        <Print>"This is a for Each statement"</Print>
+      </ForEach>
+    </Iteration>
+  </Function>
   <Main>
     <Print>"Hello World"</Print>
-    <Var const="false" name="val" type="flt">8.9*9.4/5.6</Var>
+    <Var const="false" name="hello" type="str">"Hellow"</Var>
+    <Var const="true" name="num" type="flt">6.9</Var>
+    <Return>num</Return>
   </Main>
 </Script>

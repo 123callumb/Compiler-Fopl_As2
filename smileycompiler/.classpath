@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/simleylp"/>
-	<classpathentry kind="lib" path="/Users/callumbeckwith/Documents/Uni/CS Level 5/FOP/Semester 2/Compiler-Fopl_As2/antlr-4.7.2-complete.jar"/>
+	<classpathentry kind="lib" path="D:/CS Level 5/Fop/Comipler (GitHub)/Compiler-Fopl_As2/antlr-4.7.2-complete.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="/Users/callumbeckwith/Documents/Uni/CS Level 5/FOP/Semester 2/Compiler-Fopl_As2/jfxrt.jar"/>
+	<classpathentry kind="lib" path="D:/CS Level 5/Fop/Comipler (GitHub)/Compiler-Fopl_As2/jfxrt.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

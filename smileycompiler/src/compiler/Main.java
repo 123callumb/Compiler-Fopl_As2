@@ -7,6 +7,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Scanner;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -21,7 +22,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToolBar;
+
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -45,11 +49,10 @@ public class Main extends Application {
 	}
 	
 	
-	private static void Search(String value, TextArea searchResults, TextArea errorConsole) throws IOException {
-		Searcher search = new Searcher(value);
+	private static void Search(String value, boolean custom, TreeView<String> searchResults, TextArea errorConsole) throws IOException {
+		Searcher search = new Searcher(value, custom);
 		WalkCurrentTree(search, errorConsole);
-		searchResults.clear();
-		searchResults.setText(search.getResults());
+		searchResults.setRoot(search.getResults());
 	}
 	
 	private static void CalculateVariables(ListView<String> searchCalcs, TextArea errorConsole) throws IOException {
@@ -107,16 +110,23 @@ public class Main extends Application {
 		searchBox.getItems().addAll(elementChoices);
 		Button searchButton = new Button("Search");
 		Label searchLabel = new Label("Elements Found");
-		TextArea searchResult = new TextArea();
+		TreeView<String> searchResult = new TreeView<String>();
 		Label varLabel = new Label("Variables:");
 		ListView<String> variableCalculations = new ListView<String>();
 		variableCalculations.setMaxHeight(200);
 		Label returnLabel = new Label("Program Returns = (Press 'Run' to Calculate)");
 		Label errorConsoleLabel = new Label("Error Console:");
 		TextArea errorConsole = new TextArea();
+		errorConsole.setWrapText(true);
+		errorConsole.setStyle("-fx-text-fill: red;");
 		errorConsole.setEditable(false);
 		Button clearConsole = new Button("Clear");
-		VBox searchMenu = new VBox(searchBoxLabel, searchBox, searchButton, searchLabel, searchResult, varLabel, variableCalculations, errorConsoleLabel, errorConsole, clearConsole, returnLabel);
+		Label customSearch = new Label("Custom Search:");
+		Button searchElement = new Button("Search Element");
+		Button searchVar = new Button("Search Variable");
+		HBox customSearchBox = new HBox(searchElement, searchVar);
+		customSearchBox.setSpacing(10);
+		VBox searchMenu = new VBox(searchBoxLabel, searchBox, searchButton, customSearch, customSearchBox, searchLabel, searchResult, varLabel, variableCalculations, errorConsoleLabel, errorConsole, clearConsole, returnLabel);
 		searchMenu.setPadding(new Insets(20));
 		searchMenu.setSpacing(10);
 		
@@ -128,9 +138,10 @@ public class Main extends Application {
 		Button saveSmile = new Button("Save");
 		Button saveXML = new Button("Save XML");
 		Button saveJS = new Button("Save JavaScript");
+		Button rulesButton = new Button("View Parser Rules");
 		
 		
-		ToolBar menuBar = new ToolBar(newFile, loadFile, compileBut, runBut, saveSmile, saveXML, saveJS);
+		ToolBar menuBar = new ToolBar(newFile, loadFile, compileBut, runBut, saveSmile, saveXML, saveJS, rulesButton);
 		HBox contentBox = new HBox(searchMenu, codePad, xmlResult, javascriptResult);	
 		VBox mainHolder = new VBox(menuBar, contentBox);
 		
@@ -174,7 +185,7 @@ public class Main extends Application {
 			try {
 				if(searchBox.getValue() != null) {
 					setCurrentFile(codePad.getText());
-					Search(searchBox.getValue(), searchResult, errorConsole);
+					Search(searchBox.getValue(), false, searchResult, errorConsole);
 				}
 			} catch (Exception e) {
 				errorConsole.appendText("Error searching for element!");
@@ -210,6 +221,33 @@ public class Main extends Application {
 		
 		clearConsole.setOnAction(value -> {
 			errorConsole.clear();
+		});
+		
+		searchElement.setOnAction(value -> {
+			TextInputDialog tid = new TextInputDialog("ifStmt");
+			tid.setTitle("Custom Element Search");
+			tid.setHeaderText("Search for Parser Rule");
+			Optional<String> res = tid.showAndWait();
+			if(res.isPresent()) {
+				try {
+					setCurrentFile(codePad.getText());
+					Search(res.get(), true, searchResult, errorConsole);
+				}catch(Exception e) {
+					errorConsole.appendText("Error doing custom search: " + e);
+				}
+
+			}
+		});
+		
+		rulesButton.setOnAction(value -> {
+			Stage rulesStage = new Stage();
+			rulesStage.setTitle("Element Parser Rule Names");
+			ListView<String> allRules = new ListView<String>();
+			allRules.getItems().addAll(SmileyBoiParser.ruleNames);
+			Scene ruleScene = new Scene(allRules);
+			ruleScene.getStylesheets().add("compiler/UIStyle.css");
+			rulesStage.setScene(ruleScene);
+			rulesStage.show();
 		});
 		
 		Scene mainScene = new Scene(mainHolder, mainStage.getWidth(), mainStage.getHeight());

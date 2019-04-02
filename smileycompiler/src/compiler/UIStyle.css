@@ -77,3 +77,24 @@
 .list-view .list-cell:odd {
 	-fx-background-color: rgb(30, 30, 30);
 }
+
+.tree-view {
+	-fx-background-color: rgb(20, 20, 20);
+	-fx-border-color: rgb(20, 20, 20);
+}
+
+.tree-cell {
+	-fx-text-fill: white;
+}
+
+.tree-cell:selected {
+	-fx-background-color: rgb(100, 100, 100)
+}
+
+.tree-cell:even {
+	-fx-background-color: rgb(40, 40, 40);
+}
+
+.tree-cell:odd {
+	-fx-background-color: rgb(30, 30, 30);
+}
