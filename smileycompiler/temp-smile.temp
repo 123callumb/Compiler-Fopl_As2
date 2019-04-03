@@ -1,45 +1,35 @@
 (:
-    Script example_one~
+    Script example_two~
 
-    f)->testFunction->(num1, num2){
-
-        P->"This variable is greater than 2"~
-        str test <- "lol"~
-
-        ?(num1 > 2.5)->{
-            P->"If has returned true"~
-        }->(4.5 > num2)->{
-            P->"This is else if bit"~
-        }->{
-            P->"This is else bit"~
-        }
-
-        Go->flt i <- 0.0 : i < 10.0 : i++->{
-            P->"This is a for loop"~
-        }~
-
+    f)->helloWorld->{
+        str hello <- "Hello World"~
+        P->hello~
     }
-
-    f)->functionTwo->{
-        flt num_1 <- 1.2~
-        flt num_2 <- 3.4~
-        ->testFunction(num_1, num_2)~
-
-        During->num_1<num_2->{
-            P->"it is still smaller"~
-        }~
-
-        flt[] floatArray <- {2.3, 4.5, 6.9}~
-        Go->element In floatArray->{
-            P->"This is a for Each statement"~
-        }~
-
+    
+    f)->printValue->(value, num){
+        P->value~
+        P->num~
     }
 
     Smile -> {
-        P->"Hello World"~
-        str hello <- "Hellow"~
-        Const flt num <- 6.9~
-	ret) <- num~
+        ->helloWorld~
+
+        str[] arrayOfStrings <- {}~
+        arrayOfStrings[0] <- "string_1"~
+        arrayOfStrings[1] <- "string_2"~
+        arrayOfStrings[2] <- "string_3"~
+
+        Go -> flt i <- 0.0 : i < 3.0 : i++ ->{
+            str value <- arrayOfStrings[i]~
+            ->printValue(value, i)~
+        }~
+
+        flt number <- 1.0~
+
+        Go -> element In arrayOfStrings ->{
+           -> printValue(element, number)~
+            number +<- 1.0~
+        }~
     }
+
 :)

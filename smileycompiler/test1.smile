@@ -27,6 +27,7 @@
 
         During->num_1<num_2->{
             P->"it is still smaller"~
+	    num_1 +<- 1.0~
         }~
 
         flt[] floatArray <- {2.3, 4.5, 6.9}~
@@ -37,8 +38,9 @@
     }
 
     Smile -> {
-        P->"Hello World"~
         str hello <- "Hellow"~
+	P->hello~
+	->functionTwo~
         Const flt num <- 6.9~
 	ret) <- num~
     }

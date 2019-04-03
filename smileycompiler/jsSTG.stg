@@ -12,6 +12,8 @@ forLoop(fAssign, fCond, fOper) ::= "for(<fAssign> ; <fCond> ; <fOper>){"
 
 forIn(fElement, fArray) ::= "for(<fElement> in <fArray>){"
 
-returnVal(retVal) ::= "return (<retVal>);"
+returnVal(retVal) ::= "return <retVal>;"
 
 whileStmt(whileCond) ::= "while(<whileCond>)"
+
+variable(varType, varName) ::= "<varType> <varName>"

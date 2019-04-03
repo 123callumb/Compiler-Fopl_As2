@@ -1,46 +1,38 @@
 <?xml version="1.0" encoding="utf-8" standalone="no"?>
-<Script name="example_one">
-  <Function identity="testFunction" paramName_0="num1" paramName_1="num2">
-    <Print>"This variable is greater than 2"</Print>
-    <Var const="false" name="test" type="str">"lol"</Var>
-    <ConditionBlock>
-      <If condition="num1&gt;2.5">
-        <Print>"If has returned true"</Print>
-      </If>
-      <ElseIf condition="4.5&gt;num2">
-        <Print>"This is else if bit"</Print>
-      </ElseIf>
-      <Else>
-        <Print>"This is else bit"</Print>
-      </Else>
-    </ConditionBlock>
-    <Iteration>
-      <ForLoop calculation="i++" condition="i&lt;10.0" variable="0.0">
-        <Var const="false" name="i" type="flt">0.0</Var>
-        <Print>"This is a for loop"</Print>
-      </ForLoop>
-    </Iteration>
+<Script name="example_two">
+  <Function identity="helloWorld">
+    <Var const="false" name="hello" type="str">"Hello World"</Var>
+    <Print>hello</Print>
   </Function>
-  <Function identity="functionTwo">
-    <Var const="false" name="num_1" type="flt">1.2</Var>
-    <Var const="false" name="num_2" type="flt">3.4</Var>
-    <FuncCall argument_0="num_1" argument_1="num_2" identity="testFunction"/>
-    <Iteration>
-      <While condition="num_1&lt;num_2">
-        <Print>"it is still smaller"</Print>
-      </While>
-    </Iteration>
-    <Var const="false" name="floatArray" type="flt">{2.3,4.5,6.9}</Var>
-    <Iteration>
-      <ForEach createdVariable="element" fromVarialbe="floatArray">
-        <Print>"This is a for Each statement"</Print>
-      </ForEach>
-    </Iteration>
+  <Function identity="printValue" paramName_0="value" paramName_1="num">
+    <Print>value</Print>
+    <Print>num</Print>
   </Function>
   <Main>
-    <Print>"Hello World"</Print>
-    <Var const="false" name="hello" type="str">"Hellow"</Var>
-    <Var const="true" name="num" type="flt">6.9</Var>
-    <Return>num</Return>
+    <FuncCall identity="helloWorld"/>
+    <Var const="false" name="arrayOfStrings" type="str">{}</Var>
+    <Var>
+      <ArrayAssign arrayName="arrayOfStrings" index="0">"string_1"</ArrayAssign>
+    </Var>
+    <Var>
+      <ArrayAssign arrayName="arrayOfStrings" index="1">"string_2"</ArrayAssign>
+    </Var>
+    <Var>
+      <ArrayAssign arrayName="arrayOfStrings" index="2">"string_3"</ArrayAssign>
+    </Var>
+    <Iteration>
+      <ForLoop calculation="i++" condition="i&lt;3.0" variable="0.0">
+        <Var const="false" name="i" type="flt">0.0</Var>
+        <Var const="false" name="value" type="str">arrayOfStrings[i]</Var>
+        <FuncCall argument_0="value" argument_1="i" identity="printValue"/>
+      </ForLoop>
+    </Iteration>
+    <Var const="false" name="number" type="flt">1.0</Var>
+    <Iteration>
+      <ForEach createdVariable="element" fromVarialbe="arrayOfStrings">
+        <FuncCall argument_0="element" argument_1="number" identity="printValue"/>
+        <Var action="+" name="number">1.0</Var>
+      </ForEach>
+    </Iteration>
   </Main>
 </Script>

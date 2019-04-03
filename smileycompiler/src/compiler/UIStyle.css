@@ -8,6 +8,7 @@
 	-fx-text-fill: rgb(92,198, 201);
 	-fx-background-color: rgb(20,20,20);
 	-fox-border-radius: 0;
+	-fx-font-size: 14;
 }
 
 .text-area .content {

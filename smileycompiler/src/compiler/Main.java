@@ -93,7 +93,7 @@ public class Main extends Application {
 		currentFile = new FileInputStream("temp-smile.temp");	
 	}
 
-	// This method is absolute hell but If i get time I'll clean it up!!!!!
+	// This ui stuff is absolute hell but If i get time I'll clean it up!!!!!
 	@SuppressWarnings("resource") // For file loading errors
 	@Override
 	public void start(Stage mainStage) throws Exception {

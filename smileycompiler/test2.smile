@@ -14,7 +14,7 @@
     Smile -> {
         ->helloWorld~
 
-        str[] arrayOfStrings~
+        str[] arrayOfStrings <- {}~
         arrayOfStrings[0] <- "string_1"~
         arrayOfStrings[1] <- "string_2"~
         arrayOfStrings[2] <- "string_3"~
