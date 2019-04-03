@@ -17,16 +17,13 @@ import javax.xml.transform.stream.StreamResult;
 import org.xml.sax.InputSource;
 
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeItem;
 import smiley.SmileyBoiBaseListener;
 import smiley.SmileyBoiParser;
 import smiley.SmileyBoiParser.*;
 
-public class Worker extends SmileyBoiBaseListener {
+public class XMLWorker extends SmileyBoiBaseListener {
 	
-	String xmlString = new String("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-	String JSString = "";
-	TreeItem<String> element = new TreeItem<String>();
+	String xmlString = new String("<?xml version=\"1.0\" encoding=\"utf-8\"?>"); // Idk why use String builder when this works just fine?
 	
 	@Override public void enterFileCompilation(FileCompilationContext ctx) {
 		xmlString += "<Script ";
@@ -41,16 +38,18 @@ public class Worker extends SmileyBoiBaseListener {
 	
 	@Override public void enterMainCodeBlock(SmileyBoiParser.MainCodeBlockContext ctx) {
 		xmlString += "<Main>";
-		JSString += "function Main(){\n";
 	}
 	
 	@Override public void exitMainCodeBlock(SmileyBoiParser.MainCodeBlockContext ctx) {
 		xmlString += "</Main>";
-		JSString += "}\n\nMain();";
 	}
 	
 	@Override public void enterAssign(SmileyBoiParser.AssignContext ctx) {
 			xmlString += "<Var";
+			
+			// Here we can see if assignment is calling a function.
+			boolean isCallingFunc = ctx.getChild(ctx.getChildCount() - 1).getChild(0).getChild(0).getChild(0) != null && ctx.getChild(ctx.getChildCount() - 1).getChild(0).getChild(0).getChild(0).getText().equals("->");
+			
 			//Then it's an array
 			if(ctx.getChildCount() == 1) {
 				xmlString += ">";
@@ -60,22 +59,16 @@ public class Worker extends SmileyBoiBaseListener {
 				if(ctx.getChild(0).getChildCount() != 1) { // Have to check in case it's a reassign to an existing variable.
 					xmlString += " type=\"" + ctx.getChild(0).getChild(typePos).getText() + "\"";
 					xmlString += " const=\"" + (typePos == 0 ? "false" : "true") + "\"";
-					// JS reassign var
-					JSString += typePos == 1 ? "const " : "var ";
 				}
 				// So this is just getting the name correct based on array variables and stuff.
 				String name = ctx.getChild(0).getChild(ctx.getChild(0).getChildCount() - 1).getText(); 
 				xmlString += " name=\"";
-				xmlString += name;
-				xmlString += "\">";
+				xmlString += name + "\"";
+				xmlString += ctx.getChild(1).getText().matches("\\+|\\*|-|/|\\^") ? " action=\"" + ctx.getChild(1).getText() + "\">" : ">";
 				
 				//Then the var value can go here
-				xmlString += ctx.getChildCount() != 1 ? ctx.getChild(ctx.getChildCount() -1).getText() : "";
+				xmlString += ctx.getChildCount() != 1 && !isCallingFunc ? ctx.getChild(ctx.getChildCount() -1).getText() : "";
 				
-				//JS implement 
-				JSString += name + " ";
-				JSString += ctx.getChildCount() != 1 ? " = " + ctx.getChild(ctx.getChildCount() -1).getText().replace("{", "[").replace("}", "]"): "";
-				JSString += ";\n";
 			}
 		
 	}
@@ -88,7 +81,6 @@ public class Worker extends SmileyBoiBaseListener {
 	@Override public void enterArrayAssign(SmileyBoiParser.ArrayAssignContext ctx) { 
 		xmlString += "<ArrayAssign arrayName=\"" + ctx.getChild(0).getText() + "\" index=\"" + ctx.getChild(2).getText() + "\">";
 		xmlString += ctx.getChild(ctx.getChildCount() - 1).getText();
-		JSString += ctx.getChild(0).getText() + "[" + ctx.getChild(2).getText() + "] = " + ctx.getChild(ctx.getChildCount() - 1).getText() + ";\n"; 
 	}
 	@Override public void exitArrayAssign(SmileyBoiParser.ArrayAssignContext ctx) {  xmlString += "</ArrayAssign>";}
 	@Override public void enterArrayInitial(SmileyBoiParser.ArrayInitialContext ctx) {  
@@ -96,7 +88,6 @@ public class Worker extends SmileyBoiBaseListener {
 		String name = ctx.getChild(count - 1).getText().equals('}') ? ctx.getChild(count - 3).getText() : ctx.getChild(count - 1).getText();
 		String type = ctx.getChild(0).equals("Const") ? ctx.getChild(1).getText() : ctx.getChild(0).getText();
 		xmlString += "<ArrayInitial arrayName=\"" + name + "\" type=\"" + type + "\">";	
-		JSString += "var " + name + " = " + " [];\n";
 	}
 	
 	@Override public void exitArrayInitial(SmileyBoiParser.ArrayInitialContext ctx) {  xmlString += "</ArrayInitial>"; }
@@ -109,7 +100,6 @@ public class Worker extends SmileyBoiBaseListener {
 		String logVal =  ctx.getChild(1).getText();
 		xmlString += "<Print>";
 		xmlString += logVal;
-		JSString += "console.log(" + logVal + ");\n";
 	}
 	
 	@Override public void exitPrintStmt(SmileyBoiParser.PrintStmtContext ctx) { 
@@ -127,68 +117,54 @@ public class Worker extends SmileyBoiBaseListener {
 	@Override public void enterIfCondition(SmileyBoiParser.IfConditionContext ctx) {
 		xmlString += "<If";
 		xmlString += " condition=\"" + ctx.getChild(1).getChild(1).getText().replaceAll(">", "&gt;").replaceAll("<", "&lt;") + "\">";
-		JSString += "if(" + ctx.getChild(1).getChild(1).getText() + "){\n";
 	}
 	
 	@Override public void exitIfCondition(SmileyBoiParser.IfConditionContext ctx) {
 		xmlString += "</If>";
-		JSString += "}\n";
 	}
 	
 	@Override public void enterElseStmt(SmileyBoiParser.ElseStmtContext ctx) { 
 		xmlString += "<Else>";
-		JSString += "else {\n";
 	}
 	
 	@Override public void exitElseStmt(SmileyBoiParser.ElseStmtContext ctx) { 
 		xmlString += "</Else>";
-		JSString += "}\n";
 	}
 	
 	@Override public void enterElseIfStmt(SmileyBoiParser.ElseIfStmtContext ctx) { 
 		xmlString += "<ElseIf ";
 		xmlString += " condition=\"" + ctx.getChild(1).getChild(1).getText().replaceAll(">", "&gt;").replaceAll("<", "&lt;") + "\">";
-		JSString += "else if(" + ctx.getChild(1).getChild(1).getText() + "){\n"; 
 	}
 	
 	@Override public void exitElseIfStmt(SmileyBoiParser.ElseIfStmtContext ctx) { 
 		xmlString += "</ElseIf>";
-		JSString += "}\n";
 	}
 		
 	@Override public void enterFunctionDeclare(SmileyBoiParser.FunctionDeclareContext ctx) { 
 		xmlString += "<Function";
 		xmlString += " identity=\"" + ctx.getChild(2).getText() + "\"";
 		xmlString += ctx.getChild(4).getText().equals("(") ? "" : ">";
-		JSString += "function " + ctx.getChild(2).getText() + "(";
-		JSString += ctx.getChild(4).getText().equals("(") ? "" : "){\n";
 	}
 	
 	@Override public void exitFunctionDeclare(SmileyBoiParser.FunctionDeclareContext ctx) { 
 		xmlString += "</Function>";
-		JSString += "}\n\n";
 	}
 	
 	@Override public void enterParams(SmileyBoiParser.ParamsContext ctx) { 
 		for(int i = 0; i < ctx.getChildCount(); i += 2) { // we add two so we skip the comma
 			String paramName = ctx.getChild(i).getText();
 			xmlString += " paramName_" + (i/2) + "=\"" + paramName + "\"";
-			JSString += ctx.getChildCount() - 1 == i ? paramName : paramName + ", ";
 		}
 		xmlString += ctx.getChildCount() > 0 ? ">" : "";
-		JSString += ctx.getChildCount() > 0 ? "){\n" : "";
 	}
 	
 	@Override public void enterFunctionCall(SmileyBoiParser.FunctionCallContext ctx) { 
 		xmlString += "<FuncCall identity=\"";
 		xmlString += ctx.getChild(1).getText() + "\"";
 		xmlString += ctx.getChildCount() > 2 && ctx.getChild(2).getText().equals("(") ? "" : ">";
-		JSString += ctx.getChild(1).getText() + "(";
-		JSString += ctx.getChildCount() > 2 && ctx.getChild(2).getText().equals("(") ? "" : ")";
 	}
 	
 	@Override public void exitFunctionCall(SmileyBoiParser.FunctionCallContext ctx) { 
-		JSString += ";\n";
 		xmlString += "</FuncCall>";
 	}
 	
@@ -196,10 +172,8 @@ public class Worker extends SmileyBoiBaseListener {
 		for(int i = 0; i < ctx.getChildCount(); i += 2) { // we add two so we skip the comma
 			String argValue = ctx.getChild(i).getText();
 			xmlString += " argument_" + (i/2) + "=\"" + argValue + "\"";
-			JSString += ctx.getChildCount() - 1 == i ? argValue : argValue + ", ";
 		}
 		xmlString += ctx.getChildCount() > 0 ? ">" : "";
-		JSString += ctx.getChildCount() > 0 ? ")" : "";
 	}
 	
 	@Override public void enterIterationStmt(SmileyBoiParser.IterationStmtContext ctx) { xmlString += "<Iteration>"; }
@@ -207,52 +181,37 @@ public class Worker extends SmileyBoiBaseListener {
 	
 	@Override public void enterWhileStmt(SmileyBoiParser.WhileStmtContext ctx) {
 		xmlString += "<While condition=\"" + ctx.getChild(2).getText().replaceAll(">", "&gt;").replaceAll("<", "&lt;") + "\" >";
-		JSString += "while(" + ctx.getChild(2).getText() + "){\n";
 	}
 	
 	@Override public void exitWhileStmt(SmileyBoiParser.WhileStmtContext ctx) { 
 		xmlString += "</While>";
-		JSString += "}\n";
 	}
 	
 	@Override public void enterDoWhileStmt(SmileyBoiParser.DoWhileStmtContext ctx) {
 		xmlString += "<DoWhile condition=\"" + ctx.getChild(5).getText().replaceAll(">", "&gt;").replaceAll("<", "&lt;") + "\" >";
-		JSString += "do{\n";
 	}
 	
 	@Override public void exitDoWhileStmt(SmileyBoiParser.DoWhileStmtContext ctx) { 
 		xmlString += "</DoWhile>";
-		JSString += "} while (" + ctx.getChild(5).getText() + ");\n";
 	}
 	
 	@Override public void enterForLoopStmt(SmileyBoiParser.ForLoopStmtContext ctx) {
 		xmlString += "<ForLoop variable=\"" + ctx.getChild(2).getChild(ctx.getChild(2).getChildCount() -1).getText() + "\"";
 		xmlString += " condition=\"" + ctx.getChild(4).getText().replaceAll(">", "&gt;").replaceAll("<", "&lt;") + "\"";
 		xmlString += " calculation=\"" + ctx.getChild(6).getText() + "\">";
-		JSString += "for(";
-		AssignContext asi = (AssignContext) ctx.getChild(2);
-		if(asi.getChildCount() != 1) {
-			JSString += "var " + asi.getChild(0).getChild(asi.getChild(0).getChildCount() - 1).getText() + "= " + asi.getChild(asi.getChildCount() - 1).getText();
-		}else{
-			JSString += ctx.getChild(4).getText();
-		}
-		JSString += ";" + ctx.getChild(4).getText() + ";" + ctx.getChild(6).getText() + "){\n";
 	}
 	
 	@Override public void exitForLoopStmt(SmileyBoiParser.ForLoopStmtContext ctx) {
 		xmlString += "</ForLoop>";
-		JSString += "}\n";
 	}
 	
 	@Override public void enterForEachStmt(SmileyBoiParser.ForEachStmtContext ctx) {
 		xmlString += "<ForEach createdVariable=\"" + ctx.getChild(2).getText() + "\"";
 		xmlString += " fromVarialbe=\"" + ctx.getChild(4).getText() + "\">";
-		JSString += "for(" + ctx.getChild(2).getText() + " in " + ctx.getChild(4).getText() + "){\n";
 	}
 	
 	@Override public void exitForEachStmt(SmileyBoiParser.ForEachStmtContext ctx) {
 		xmlString += "</ForEach>";
-		JSString += "}\n";
 	}
 	
 	@Override public void enterGlobalItems(SmileyBoiParser.GlobalItemsContext ctx) {
@@ -261,7 +220,6 @@ public class Worker extends SmileyBoiBaseListener {
 	
 	@Override public void enterReturnStmt(SmileyBoiParser.ReturnStmtContext ctx) { 
 		xmlString += "<Return>" + ctx.getChild(2).getText() + "</Return>";
-		JSString += "return " + ctx.getChild(2).getText() + ";\n";
 	}
 	
 	public void createXML(TextArea xmlArea) throws Exception {
@@ -294,24 +252,6 @@ public class Worker extends SmileyBoiBaseListener {
 			System.err.print("Error printing xml to ui");
 		}
 
-	}
-	
-	public void writeJStoUI(TextArea jsUI) {
-		jsUI.clear();
-		// I try to pretty the javascript here
-		String[] JSLines = JSString.split("\n");
-		String currentTabs = "";
-		jsUI.appendText(JSLines[0] + "\n");
-		for(int l = 1; l < JSLines.length; l++) {
-			//This removes the variable created under the for loop
-			JSLines[l] = JSLines[l - 1].replaceAll("\t", "").startsWith("for(") && !JSLines[l-1].contains("in") ?  "" : JSLines[l];
-			// So this is checking the previous line to see if it is a { or } and will format the tabulation.
-			currentTabs = (JSLines[l-1].contains("{")) ? currentTabs + "\t"  : JSLines[l].contains("}") ? currentTabs.substring(0, currentTabs.length() - 1) : currentTabs;
-			//Then here we just append it to the ui
-			if(!JSLines[l].equals("")) {
-				jsUI.appendText(currentTabs + JSLines[l] + "\n");
-			}
-		}
 	}
 
 

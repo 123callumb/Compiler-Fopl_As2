@@ -1,12 +1,12 @@
 (:
-    Script example_2~
+    Script example_three~
 
     flt globalNumber <- 1.0~
     bln globalBool <- no~
 
     f)->increaseToTen->(numberVal){
 
-        During->numberVal>10.0->{
+        During->numberVal<10.0->{
             numberVal + <- 1.0~
         }~
         
@@ -14,8 +14,8 @@
             globalBool <- yes~
         }
 
-        ?(!globalBool)->{
-            ret) <- numberVal~
+        ?(globalBool)->{
+            ret) <- 17.0~
         }->{
             ret) <- 0.0~
         }
@@ -26,7 +26,7 @@
         
         globalNumber<-->increaseToTen(globalNumber)~
         Const flt newNumber <- (9.0*globalNumber)*4.0~
-
+	ret) <- newNumber~
     }
 
 :)

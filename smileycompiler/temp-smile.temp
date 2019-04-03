@@ -1,32 +1,45 @@
 (:
-    Script example_2~
+    Script example_one~
 
-    flt globalNumber <- 1.0~
-    bln globalBool <- no~
+    f)->testFunction->(num1, num2){
 
-    f)->increaseToTen->(numberVal){
+        P->"This variable is greater than 2"~
+        str test <- "lol"~
 
-        During->numberVal>10.0->{
-            numberVal + <- 1.0~
-        }~
-        
-        ?(numberVal == 10.0)->{
-            globalBool <- yes~
-        }
-
-        ?(!globalBool)->{
-            ret) <- numberVal~
+        ?(num1 > 2.5)->{
+            P->"If has returned true"~
+        }->(4.5 > num2)->{
+            P->"This is else if bit"~
         }->{
-            ret) <- 0.0~
+            P->"This is else bit"~
         }
-       
+
+        Go->flt i <- 0.0 : i < 10.0 : i++->{
+            P->"This is a for loop"~
+        }~
+
+    }
+
+    f)->functionTwo->{
+        flt num_1 <- 1.2~
+        flt num_2 <- 3.4~
+        ->testFunction(num_1, num_2)~
+
+        During->num_1<num_2->{
+            P->"it is still smaller"~
+        }~
+
+        flt[] floatArray <- {2.3, 4.5, 6.9}~
+        Go->element In floatArray->{
+            P->"This is a for Each statement"~
+        }~
+
     }
 
     Smile -> {
-        
-        globalNumber<-->increaseToTen(globalNumber)~
-        Const flt newNumber <- (9.0*globalNumber)*4.0~
-
+        P->"Hello World"~
+        str hello <- "Hellow"~
+        Const flt num <- 6.9~
+	ret) <- num~
     }
-
 :)

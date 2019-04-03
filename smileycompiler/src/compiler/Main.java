@@ -41,16 +41,26 @@ public class Main extends Application {
 		Application.launch(args);
 	}
 	
-	private static void Compile(TextArea xmlArea, TextArea javaScriptArea, TextArea errorConsole) throws Exception {
-		Worker builder = new Worker();
-		WalkCurrentTree(builder, errorConsole);
-		builder.createXML(xmlArea);
-		builder.writeJStoUI(javaScriptArea);
+	private static void Compile(TextArea smileArea, TextArea xmlArea, TextArea javaScriptArea, TextArea errorConsole) throws Exception {
+				
+		// XML Walker
+		XMLWorker xmlBuilder = new XMLWorker();
+		WalkCurrentTree(xmlBuilder, errorConsole);
+		xmlBuilder.createXML(xmlArea);
+		
+		// Set the current file again as it gets closed!
+		setCurrentFile(smileArea.getText());
+		
+		// JS Walker
+		JSWorker jsBuilder = new JSWorker();
+		WalkCurrentTree(jsBuilder, errorConsole);
+		jsBuilder.writeJStoUI(javaScriptArea);
+	
 	}
 	
 	
-	private static void Search(String value, boolean custom, TreeView<String> searchResults, TextArea errorConsole) throws IOException {
-		Searcher search = new Searcher(value, custom);
+	private static void Search(String value, boolean custom, boolean isVariable, TreeView<String> searchResults, TextArea errorConsole) throws IOException {
+		Searcher search = new Searcher(value, custom, isVariable);
 		WalkCurrentTree(search, errorConsole);
 		searchResults.setRoot(search.getResults());
 	}
@@ -111,14 +121,15 @@ public class Main extends Application {
 		Button searchButton = new Button("Search");
 		Label searchLabel = new Label("Elements Found");
 		TreeView<String> searchResult = new TreeView<String>();
+		searchResult.setMaxHeight(240);
 		Label varLabel = new Label("Variables:");
 		ListView<String> variableCalculations = new ListView<String>();
 		variableCalculations.setMaxHeight(200);
-		Label returnLabel = new Label("Program Returns = (Press 'Run' to Calculate)");
+//		Label returnLabel = new Label("Program Returns = (Press 'Run' to Calculate)");
 		Label errorConsoleLabel = new Label("Error Console:");
 		TextArea errorConsole = new TextArea();
 		errorConsole.setWrapText(true);
-		errorConsole.setStyle("-fx-text-fill: red;");
+		errorConsole.setStyle("-fx-text-fill: #F15D5E;");
 		errorConsole.setEditable(false);
 		Button clearConsole = new Button("Clear");
 		Label customSearch = new Label("Custom Search:");
@@ -126,7 +137,7 @@ public class Main extends Application {
 		Button searchVar = new Button("Search Variable");
 		HBox customSearchBox = new HBox(searchElement, searchVar);
 		customSearchBox.setSpacing(10);
-		VBox searchMenu = new VBox(searchBoxLabel, searchBox, searchButton, customSearch, customSearchBox, searchLabel, searchResult, varLabel, variableCalculations, errorConsoleLabel, errorConsole, clearConsole, returnLabel);
+		VBox searchMenu = new VBox(searchBoxLabel, searchBox, searchButton, customSearch, customSearchBox, searchLabel, searchResult, varLabel, variableCalculations, errorConsoleLabel, errorConsole, clearConsole);
 		searchMenu.setPadding(new Insets(20));
 		searchMenu.setSpacing(10);
 		
@@ -175,9 +186,10 @@ public class Main extends Application {
 		compileBut.setOnAction(value -> {
 			try {
 				setCurrentFile(codePad.getText());
-				Compile(xmlResult, javascriptResult, errorConsole);
+				Compile(codePad, xmlResult, javascriptResult, errorConsole);
 			} catch (Exception e) {
 				errorConsole.appendText("Failure Compiling Script :( \n\nError:" + e);
+				System.err.print(e);
 			}
 		});
 		
@@ -185,7 +197,7 @@ public class Main extends Application {
 			try {
 				if(searchBox.getValue() != null) {
 					setCurrentFile(codePad.getText());
-					Search(searchBox.getValue(), false, searchResult, errorConsole);
+					Search(searchBox.getValue(), false, false, searchResult, errorConsole);
 				}
 			} catch (Exception e) {
 				errorConsole.appendText("Error searching for element!");
@@ -231,11 +243,26 @@ public class Main extends Application {
 			if(res.isPresent()) {
 				try {
 					setCurrentFile(codePad.getText());
-					Search(res.get(), true, searchResult, errorConsole);
+					Search(res.get(), true, false, searchResult, errorConsole);
 				}catch(Exception e) {
 					errorConsole.appendText("Error doing custom search: " + e);
 				}
 
+			}
+		});
+		
+		searchVar.setOnAction(value -> {
+			TextInputDialog tid = new TextInputDialog("Variable Name");
+			tid.setTitle("Custom Variable Search");
+			tid.setHeaderText("Search for Variable in Current Script.");
+			Optional<String> res = tid.showAndWait();
+			if(res.isPresent()) {
+				try {
+					setCurrentFile(codePad.getText());
+					Search(res.get(), true, true, searchResult, errorConsole);
+				}catch(Exception e) {
+					
+				}
 			}
 		});
 		

@@ -1,0 +1,17 @@
+print(v) ::= "console.log(<v>);" 
+
+ifStatement(condition) ::= "if(<condition>){"
+
+elseIfStatement(eCondition) ::= "else if(<eCondition>){"
+
+functionDeclare(name, args) ::= "function <name>(<args>){"
+
+functionCall(callName, callArg) ::= "<callName>(<callArg>)"
+
+forLoop(fAssign, fCond, fOper) ::= "for(<fAssign> ; <fCond> ; <fOper>){"
+
+forIn(fElement, fArray) ::= "for(<fElement> in <fArray>){"
+
+returnVal(retVal) ::= "return (<retVal>);"
+
+whileStmt(whileCond) ::= "while(<whileCond>)"
