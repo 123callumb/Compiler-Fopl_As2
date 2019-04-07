@@ -246,7 +246,7 @@ public class XMLWorker extends SmileyBoiBaseListener {
 		try(Scanner loadscan = new Scanner(xmlFile).useDelimiter("\n")){
 			xmlArea.clear();
 			while(loadscan.hasNext()) {
-				xmlArea.appendText(loadscan.next().replaceAll("&gt;", ">").replaceAll("&lt;", "<") + "\n");
+				xmlArea.appendText(loadscan.next() + "\n");
 			}
 		}catch(IOException e) {
 			System.err.print("Error printing xml to ui");
